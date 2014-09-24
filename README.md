@@ -1,5 +1,5 @@
 #purple-include
-##Granular transclusions for the common man.
+##Granular transclusions for the common man
 
 Iteration 3 (December 25th, 2007)
 
@@ -15,7 +15,7 @@ page in another without copying and pasting any content.  For
 example, you could quote the second paragraph from another
 person's blog entry by embedding something like:
 
-    &lt;div href="http://foo.com/bar.html#xpath(/p[2])"&gt;&lt;/div&gt;
+    <div href="http://foo.com/bar.html#xpath(/p[2])"></div>
 
 in your blog page.  The expression following the explanation point
 in the URL is an XPath expression.
@@ -23,21 +23,21 @@ in the URL is an XPath expression.
 If the page you want to transclude has a fragment identifier or a
 purple number, you can transclude that directly:
 
-    &lt;div href="http://foo.com/purple.html#nid32"&gt;&lt;/div&gt;
+    <div href="http://foo.com/purple.html#nid32"></div>
 
 In fact, all you have to do is add an 'href' attribute to any of the following
 types of HTML tags in order to have that URL transcluded right into the page
 when the page loads:
 
-&lt;p href="http://foobar.com#nid32"&gt;&lt;/p&gt;
+<p href="http://foobar.com#nid32"></p>
 
-&lt;blockquote href="http://foobar.com#xpath(/p[2])"&gt;&lt;/blockquote&gt;
+<blockquote href="http://foobar.com#xpath(/p[2])"></blockquote>
 
-&lt;div href="includeme.html#foobar"&gt;&lt;/div&gt;
+<div href="includeme.html#foobar"></div>
 
-&lt;span href="../../relativefile.html#foobar"&gt;&lt;/span&gt;
+<span href="../../relativefile.html#foobar"></span>
 
-&lt;q href="http://foobar.com#foobar"&gt;&lt;/q&gt;
+<q href="http://foobar.com#foobar"></q>
 
 ##INSTALLATION
 
@@ -46,7 +46,7 @@ now, at codinginparadise.org, even the inclusion service and
 JavaScript, so all you have to do is add the following JavaScript
 to the top of your page:
 
-&lt;script src="http://codinginparadise.org/projects/purple-include/purple-include.js"&gt;&lt;/script&gt;
+<script src="http://codinginparadise.org/projects/purple-include/purple-include.js"></script>
 
 You can manually host everything yourself if you have a high
 traffic web-site; see the JavaScript itself for how to configure
