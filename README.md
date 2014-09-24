@@ -94,7 +94,7 @@ See TODO and HAIRYISSUES for more ideas.
 
 LICENSE
 
-Apache 2 license.
+Apache 2 license for the client-side JavaScript portion (purple-include.js) and everything except for what is in the server/ directory.
 
 The hosted inclusion gateway, inside the server/ directory,
 used the HyperScope XHTML Transformer as a starting point,
