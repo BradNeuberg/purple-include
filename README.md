@@ -29,15 +29,15 @@ In fact, all you have to do is add an 'href' attribute to any of the following
 types of HTML tags in order to have that URL transcluded right into the page
 when the page loads:
 
-<p href="http://foobar.com#nid32"></p>
+    <p href="http://foobar.com#nid32"></p>
 
-<blockquote href="http://foobar.com#xpath(/p[2])"></blockquote>
+    <blockquote href="http://foobar.com#xpath(/p[2])"></blockquote>
 
-<div href="includeme.html#foobar"></div>
+    <div href="includeme.html#foobar"></div>
 
-<span href="../../relativefile.html#foobar"></span>
+    <span href="../../relativefile.html#foobar"></span>
 
-<q href="http://foobar.com#foobar"></q>
+    <q href="http://foobar.com#foobar"></q>
 
 ##INSTALLATION
 
