@@ -65,7 +65,7 @@ if you don't)
 purple-include is one of many projects in the "Purple" universe --
 simple tools that implement some of Doug Engelbart's many ideas in
 today's world.  It was developed by core members of the HyperScope
-(http://hyperscope.org/) team (Brad Neuberg, Jonathan Cheyer, and
+([http://hyperscope.org/](https://web.archive.org/web/20140401230652/http://hyperscope.org/)) team (Brad Neuberg, Jonathan Cheyer, and
 Eugene Eric Kim) in response to the question, "What's something
 cool, simple, and HyperScope-inspired we could hack in a couple of
 hours?"
