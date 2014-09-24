@@ -86,13 +86,13 @@ The hosted inclusion gateway is based off of the HyperScope
 XHTML transformer, built by Brad Neuberg as part of the HyperScope
 project.
 
-THE FUTURE
+##THE FUTURE
 
 The coolness doesn't end here.  There are a bunch of small hacks
 we can make to the code that will really make this interesting.
 See TODO and HAIRYISSUES for more ideas.
 
-LICENSE
+##LICENSE
 
 Apache 2 license for the client-side JavaScript portion (purple-include.js) and everything except for what is in the server/ directory.
 
