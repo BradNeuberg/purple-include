@@ -39,6 +39,8 @@ when the page loads:
 
     <q href="http://foobar.com#foobar"></q>
 
+There were many blog posts going into Purple Include that you can [follow](http://codinginparadise.org/weblog/labels/purple%20include.html).
+
 ##INSTALLATION
 
 There is no installation anymore! Brad Neuberg hosts everything on his webserver
