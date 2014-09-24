@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project name="purpleInclude" default="release" basedir=".">
+	
+	<property environment="env"/>
+
+	<path id="project.classpath">
+		<fileset dir="server/lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	
+	<target name="help">
+		<echo><![CDATA[
+Ant tasks:
+		
+release:
+		Builds the Purple Include server-side
+		
+The default task is 'release'.
+		]]></echo>
+	</target>
+	
+	<target name="clean">
+		<delete dir="release"/>
+	</target>
+	
+	<target name="clobber" depends="clean">
+	</target>
+	
+	<target name="release"
+			depends="purple_include">
+		<mkdir dir="release"/>
+	</target>
+	
+	<target name="purple_include">
+		<description>
+			Builds the Purple Include server-side.
+		</description>
+		
+		<mkdir dir="release/compile"/>
+		
+		<!-- Compile our Java source files -->
+		<javac	classpathref="project.classpath"
+				debug="true"
+				target="1.4"
+				source="1.4"
+				srcdir="server/org/hyperscope/purple/include/"
+				destdir="release/compile"/>
+		
+		<!-- Generate a WAR file ready for deployment -->
+		<war destfile="release/purple_include.war"
+			 webxml="server/WEB-INF/web.xml">
+			<lib dir="server/lib">
+				<include name="*.jar"/>
+				<exclude name="servlet-api.jar"/>
+			</lib>
+			<classes dir="release/compile"/>
+		</war>
+	</target>
+	
+	<target name="all" depends="release">
+	</target>
+</project>

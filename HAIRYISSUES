@@ -1,0 +1,47 @@
+Hairy Issues (July 2, 2007)
+
+
+  TYPE MATCHING
+
+    If you transclude certain node types (list items, table cells),
+    you need to make sure they are wrapped in the appropriate tags so
+    that they are valid in the transcluding document.  To do this,
+    we'll need some hairy type checking.
+
+  INTERPRETING FRAGMENT IDENTIFIERS
+
+    Right now, we take a "purple numbers" view of the world.  In other
+    words, if you have:
+
+        <h2><a name="nid2" />Hairy Issues</h2>
+
+        <p>Sasquatch.</p>
+
+    and transcluded:
+
+        <div href="hairy.html#nid2"></div>
+
+    you would get:
+
+        <h2><a name="nid2" />Hairy Issues</h2>
+
+    You might actually want the whole section starting with the
+    header.  How would you do that in XPath?  What's the right
+    default?
+
+  FINER GRANULARITY
+
+    We'd really like folks to be able to highlight a section of a Web
+    page, then transclude that content.  When we do this, we'll run
+    into range issues -- transcluding sections of content without end
+    tags, for example.  These are all things that Ted Nelson points
+    out in his essay, "Embedded Markup Considered Harmful."  We can
+    handle it, but it will be hairy.
+
+  XHTML ISSUES ON SOME BROWSERS
+
+	In Internet Explorer, if you transclude some remote content that
+	is XHTML, such as <a name="foobar"/>, IE will not be able to 
+	parse the content because there is no space before the /> since
+	it does not understand XHTML. The hosted inclusion service
+	could normalize this XHTML with a space before it.

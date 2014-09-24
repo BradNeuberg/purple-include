@@ -1,0 +1,277 @@
+/* 
+	Copyright 2007 Bootstrap Foundation.
+
+	This code is under the GPL version 2 or later.
+	
+	@author Brad Neuberg 
+*/
+
+package org.hyperscope.purple.include.address;
+
+import java.net.URL;
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+import java.io.StringReader;
+import java.io.IOException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Node;
+import org.w3c.dom.CharacterData;
+
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
+
+import org.w3c.dom.ranges.DocumentRange;
+import org.w3c.dom.ranges.Range;
+
+import org.w3c.dom.traversal.DocumentTraversal;
+import org.w3c.dom.traversal.NodeIterator;
+import org.w3c.dom.traversal.NodeFilter;
+
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.SAXNotRecognizedException;
+
+import org.apache.xerces.parsers.DOMParser;
+
+class QuoteAddress implements Address{
+	/** 
+		Constants that identify whether we are looking for
+		the start or the end of the text to include.
+	*/
+	protected int START = 0;
+	protected int END = 1;
+	
+	public String resolve(String infileAddress, 
+							String content, 
+							String mimeType) throws AddressException{	
+		try{						
+			// get the start and end of the text to find
+			String pieces[] = infileAddress.split("\\.\\.\\.");
+			if(pieces == null || pieces.length != 2){
+				throw new AddressException("Invalid quote address: " 
+					+ infileAddress);
+			}
+			String start = pieces[0];
+			String end = pieces[1];
+		
+			//System.out.println("start="+start);
+			//System.out.println("end="+end);
+		
+			// parse content into a DOM
+			Document document = parseDocument(content);
+		
+			// now find the beginning and end of the ranges that
+			// match this text
+			Node body = document.getElementsByTagName("body").item(0);
+			Range range = ((DocumentRange)document).createRange();
+			DocumentTraversal traverse = (DocumentTraversal)document;
+			NodeFilter filter = null;
+			NodeIterator nodes = 
+				traverse.createNodeIterator(body, 
+							NodeFilter.SHOW_CDATA_SECTION | NodeFilter.SHOW_TEXT, 
+							filter, true);
+			boolean results = findString(range, START, nodes, start);
+			if(results == false){
+				throw new AddressException("Unable to find start of quote range: " 
+											+ start);
+			}
+		
+			// jump the node iterator backwards one; this is for cases
+			// where the start and end text are in the same node
+			nodes.previousNode();
+			//System.out.println("nodes="+nodes);
+			results = findString(range, END, nodes, end);
+			if(results == false){
+				throw new AddressException("Unable to find end of quote range: " 
+											+ end);
+			}
+
+			// get the fragment represented by this range
+			DocumentFragment fragment = range.cloneContents();
+
+			// serialize fragment into string
+			//System.out.println("fragment="+fragment);
+			return serialize((Node)fragment);
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new AddressException(e);
+		}
+	}
+	
+	protected boolean findString(Range range, int rangePos,
+	 							NodeIterator nodes, String fullString){
+		return findString(range, rangePos, nodes, fullString,
+							null, null, null);
+	}
+	
+	protected boolean findString(Range range, int rangePos,
+	 							NodeIterator nodes, String fullString,
+								String partialString, Node partialNode,
+								Integer lastOffset){
+		//System.out.println("\n\nfindString, rangePos="+rangePos+", nodes="+nodes+", fullString="+fullString+", partialString="+partialString+", partialNode="+partialNode+", lastOffset="+lastOffset);
+		String findMe = (partialString != null) ? partialString : fullString;
+		//System.out.println("findMe="+findMe);
+		Node n = nodes.nextNode();
+		Integer potentialOffset = null;
+		while(n != null){
+		    // see if this node has the string we are looking for
+		    String data = ((CharacterData)n).getData();
+		
+			// strip out new lines and tabs
+			data = data.replaceAll("\n", " ");
+			data = data.replaceAll("\t", " ");
+			//System.out.println("data="+data);
+			
+			int sourceIndex = 0;
+		    int matchIndex = 0;
+		    while(sourceIndex < data.length()){
+				//System.out.println("scanning source index, sourceIndex="+sourceIndex+", matchIndex="+matchIndex);
+				
+				if(data.charAt(sourceIndex) == findMe.charAt(matchIndex)
+							&& (matchIndex + 1) == findMe.length()){
+		            // match found; we are done
+					//System.out.println("match found -- we are done");
+		            matchIndex++;
+					sourceIndex++;
+		            break;
+				}else if(data.charAt(sourceIndex) == findMe.charAt(matchIndex)){
+		            // match found; jump to next location in match string
+					if(potentialOffset == null){
+						potentialOffset = new Integer(sourceIndex);
+					}
+					
+					//System.out.println("match found; go next location");
+		            matchIndex++;
+		        }else{ // not found; reset everything
+		            matchIndex = 0;
+					if(partialNode != null){
+						// reset where we are looking at in this current
+						// node since we might not have been looking with
+						// the right text string since we thought we had
+						// some partial matches in earlier text nodes
+						sourceIndex = 0;
+					}
+					potentialOffset = null;
+					partialString = null;
+					lastOffset = null;
+					partialNode = null;
+					findMe = fullString;
+					//System.out.println("Reseting everything");
+		        }
+		
+				if(matchIndex == findMe.length()){
+					matchIndex = 0;
+				}
+
+		        sourceIndex++;
+		    }
+
+		    if(matchIndex == 0){
+		        // nothing found; keep searching on next node
+				//System.out.println("nothing found -- going to next node");
+		        n = nodes.nextNode();
+		    }else if(matchIndex == findMe.length()){
+		        // fully done
+				//System.out.println("fully done");
+		        if(rangePos == START){
+					if(partialNode != null && lastOffset != null){
+						//System.out.println("1");
+						//System.out.println("partialNode="+partialNode);
+						//System.out.println("lastOffset="+lastOffset.intValue());
+						range.setStart(partialNode, lastOffset.intValue());
+					}else if(sourceIndex == 0){
+						//System.out.println("2");
+						range.setStartBefore(n);
+					}else{
+						//System.out.println("3");
+						range.setStart(n, sourceIndex - fullString.length());
+					}
+		        }else if(rangePos == END){
+		            if((sourceIndex - 1) == data.length()){
+		                range.setEndAfter(n);
+		            }else{
+		                range.setEnd(n, sourceIndex);
+		            }
+		        }
+
+	        	return true;
+		    }else{ // partial match
+				//System.out.println("partial match");
+		        // recursively keep searching
+		        partialString = findMe.substring(matchIndex);
+		        if(rangePos == START){
+		            partialNode = (partialNode != null) ? partialNode : n;
+		            lastOffset = (lastOffset != null) 
+									? lastOffset : potentialOffset;
+		            return findString(range, rangePos, nodes, 
+										fullString, partialString, 
+										partialNode, lastOffset); 
+		        }else if(rangePos == END){
+		            partialNode = n;
+		            lastOffset = null;
+		            return findString(range, rangePos, nodes, 
+										fullString, partialString, 
+										partialNode, lastOffset);
+		        }
+		    }
+		}
+
+		return false;
+	}
+
+	protected Document parseDocument(String content) 
+						throws SAXNotRecognizedException,
+								SAXException,
+								IOException{
+		InputSource source = new InputSource(new StringReader(content));
+		
+		DOMParser parser = new DOMParser();
+		parser.setFeature("http://apache.org/xml/features/dom/defer-node-expansion", true);
+		parser.setErrorHandler(new ErrorHandler(){
+				public void warning(SAXParseException ex) {
+					System.out.println("Parse warning: " + ex);
+				}
+
+				public void error(SAXParseException ex) {
+					System.out.println("Parse error: " + ex);
+				}
+
+				public void fatalError(SAXParseException ex) throws SAXException {
+					System.out.println("Parse fatal error: " + ex);
+				}
+		});
+		parser.parse(source);
+		return parser.getDocument();
+	}
+	
+	protected String serialize(Node n) 
+				throws ClassNotFoundException,
+						InstantiationException,
+						IllegalAccessException{
+		System.setProperty(DOMImplementationRegistry.PROPERTY,
+							"org.apache.xerces.dom.DOMImplementationSourceImpl");
+		DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+
+		DOMImplementationLS impl = 
+				(DOMImplementationLS)registry.getDOMImplementation("LS");
+
+		LSSerializer writer = impl.createLSSerializer();
+		String str = writer.writeToString(n);
+		
+		// sometimes we get processor directives, such as <?xml version="1.0"?>
+		// strip these out
+		Pattern directivePattern = Pattern.compile("<\\?xml.*$", Pattern.MULTILINE);
+		Matcher m = directivePattern.matcher(str);
+		str = m.replaceFirst("");
+		
+		return str;
+	}
+}

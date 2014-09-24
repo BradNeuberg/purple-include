@@ -1,0 +1,40 @@
+To Do (December 25th, 2007)
+
+  * Consolidate not using two XML parsers (Xerces and Saxon)
+
+  * Write quote() unit tests
+
+  * When I push Purple Include to my web server, large documents like the HTML 5 spec become
+	slow or unreliable, while locally they are fine; what is up? We need to do some performance
+	testing.
+	
+  * I left in lots of commented out System.out.println's since I am still testing the
+  QuoteAddress -- clean up once done.
+
+  * Update docs on Eugene's server
+
+  * Include a link back to the original source.  If the source uses a
+    fragment identifier, you can make a granular link; otherwise, link
+    back to the whole document.
+
+  * Write a Firefox plugin that allows you to right-click / Transclude
+    content into a text widget, thus making it easy to embed
+    transclusions into your blog or CMS.
+
+  * Handle granularity finer than a node (i.e. in-node text addressing)
+
+  * Be able to handle relative links that are just anchors: #example
+
+  * Timeout after a period of time when trying to do a transclusion
+
+  * One of the "Should fails" on the example page, the blockquote example,
+  doesn't fail correctly
+
+  * XHTML inclusion on Internet Explorer will not work if there
+	is no space before the /> tag, such as <a name="foobar"/> --
+	normalize this on the hosted server-side and add a space for
+	IE.
+
+  * Solve global warming.
+
+  * Never lose socks again.

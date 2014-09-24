@@ -1,0 +1,46 @@
+Current
+----------------
+* Adapted client-code to new blockquote and q syntax where we use cite instead of href; the old
+href syntax is still there but deprecated.
+* Working on: allow same address to be used twice
+
+December 25th, 2007
+-------------------
+* Experimenting with new #quote() syntax
+* When we tidy our HTML, made it more conservative; for example, we now leave presentational markup, leave B and I tags, etc. whereas before these were cleaned up.
+* Refactored code into a Resolver class that abstracts the specific type of Address we are dealing with (and introduced the Address abstraction for new kinds of address types)
+
+September 6th, 2007
+-----------------
+
+* Moving away from numbered releases for now -- instead will have dates, such as purple-include-09-06-2007. This is so we don't have too much version churn, especially since Purpe Include is more of a hosted service now
+
+* Added a callback, purpleInclude.addLoaded(), that you can register a callback on that will be called when the page is finished loading and all inclusions have been inlined.
+
+* Created unit testing framework based on JSUnit and added tests for all current examples. Tests are in tests/TestPurpleInclude.html. To run go to http://codinginparadise.org/projects/hypertext/purple-include/tests/lib/jsunit/testRunner.html?testPage=http://codinginparadise.org/projects/hypertext/purple-include/tests/TestPurpleInclude.html&autoRun=true
+
+August 15th, 2007
+-----------------
+Purple Include Version 1.9 
+
+This is a pretty radical refactoring of the Purple Include code. The big highlights in this version:
+
+* Now works cross-browser: Internet Explorer, Firefox, and Safari (Opera should work but has not been tested)
+
+* There are no server-side requirements anymore. Instead, the inclusion service is hosted on my web site at codinginparadise.org and we do a trick in the JavaScript (the JSON/Script tag trick) in order to do transclusions through a third-party web site. You can see the server-side yourself though in the source file under server/. All you have to do is drop the JavaScript into your page and start using it.
+
+* We no longer have an <hx:include> tag; instead, you can simply add an 'href' attribute to many different HTML types and have that type transclude it's contents:
+
+<p href="http://codinginparadise.org/paperairplane#xpath(//[@id='table_of_contents']")</p>
+
+This works for the following tags: P, BLOCKQUOTE, Q, PRE, DIV, SPAN
+
+* The client-side script has gotten vastly smaller and simpler -- the script is now only about 9K.
+
+* We now use the notation #xpath(//p) around an XPath expression rather than using an exclamation point, such as #xpath!//p. This is in keeping with the pseudo-standard that has developed around this practice, such as #xpointer() -- it also opens up the possibility of chaining together expressions in the future, such as #xpath(//expression1)xpath(//expression2), which would return the results of both expressions.
+
+* The little roller image, roller.gif, used to be a pain in the butt to configure because it was always
+relative to the page you are using transclusions on, which therefore required you to specify a relative path
+or something using a META tag. To cut down on configuration, I now just host this image on my web
+server -- you can set it to your own path using the META tag 'purple.include.rollerURL' but we default it
+inside the code to my webserver. This means that all you have to do now to use Purple Include is have the JavaScript file -- that's it.
